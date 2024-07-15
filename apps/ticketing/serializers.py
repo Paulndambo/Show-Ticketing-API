@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from apps.ticketing.models import Theatre
+from apps.ticketing.models import Theater
 
-class TheatreSerializer(serializers.ModelSerializer):
+
+class TheaterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Theatre
+        model = Theater
         fields = "__all__"
