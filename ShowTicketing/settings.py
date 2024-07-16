@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.ticketing",
+    "apps.reservations",
     "apps.notifications",
 ]
 
