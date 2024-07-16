@@ -6,7 +6,6 @@ from apps.ticketing.views import (
     TheaterSeatingDetailAPIView,
     ShowsAPIView,
     ShowDetailAPIView,
-    GenerateSeatingArrangementAPIView,
 )
 
 urlpatterns = [
@@ -22,10 +21,5 @@ urlpatterns = [
         "seatings/<int:pk>/",
         TheaterSeatingDetailAPIView.as_view(),
         name="seating-deatils",
-    ),
-    path(
-        "generate-seating/",
-        GenerateSeatingArrangementAPIView.as_view(),
-        name="generate-seating",
     ),
 ]

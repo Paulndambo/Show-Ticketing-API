@@ -12,9 +12,9 @@ class CancelReservationMixin(object):
     def run(self):
         if len(self.data.get("seats")) >= 2:
             self.__cancel_multi_seat_reservation()
-        
+
         self.__cancel_single_seat_reservation()
-    
+
     @transaction.atomic
     def __cancel_single_seat_reservation(self):
         reservation = Reservation.objects.get(id=self.data["seats"][0], user=self.user)
@@ -32,4 +32,3 @@ class CancelReservationMixin(object):
         seat_ids = list(reservations.values_list("seat_id", flat=True))
         seats = TheaterSeating.objects.filter(id__in=seat_ids)
         seats.update(booked=False)
-        

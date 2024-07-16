@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from apps.reservations.models import Reservation
-from apps.reservations.serializers import ReservationSerializer, ReserveSeatSerializer, CancelReservationSerializer
+from apps.reservations.serializers import (
+    ReservationSerializer,
+    ReserveSeatSerializer,
+    CancelReservationSerializer,
+)
 from apps.ticketing.models import TheaterSeating
 from apps.reservations.methods.reserve_seat import SeatReservationMixin
 from apps.reservations.methods.cancel_reservation import CancelReservationMixin
@@ -60,5 +64,8 @@ class CancelReservationAPIView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             mixin = CancelReservationMixin(data=data, user=user)
             mixin.run()
-            return Response({ "message": "Reservation cancelled successfully" }, status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "Reservation cancelled successfully"},
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

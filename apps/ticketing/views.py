@@ -3,8 +3,6 @@ from datetime import datetime
 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
 
 
 from apps.ticketing.models import Theater, TheaterSeating, Show
@@ -12,9 +10,10 @@ from apps.ticketing.serializers import (
     TheaterSerializer,
     TheaterSeatingSerializer,
     ShowSerializer,
-    SeatingArrangementSerializer,
+    ShowListSerializer,
+    CreateShowSerializer,
 )
-from apps.ticketing.methods.generate_seating import SeatingArrangementGenerator
+from apps.ticketing.methods.create_show import CreateShowMixin
 
 from apps.core.custom_permissions import IsAdminOrReadOnly
 
@@ -26,17 +25,17 @@ class TheatreAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
     def get_queryset(self):
-        theater = self.request.query_params.get("theater")
+
         specified_date = self.request.query_params.get("date")
 
-        if theater and specified_date:
+        if specified_date:
             search_date = datetime.strptime(specified_date, "%Y-%m-%d").date()
-            # print(f"Theater: {theater}, String Date: {type(specified_date)}, Date: {type(search_date)}")
-            seatings = TheaterSeating.objects.filter(seating_date=search_date).distinct(
-                "theater"
+            seatings = (
+                TheaterSeating.objects.filter(seating_date=search_date)
+                .values_list("theater_id", flat=True)
+                .distinct()
             )
-            print(seatings)
-
+            return self.queryset.exclude(id__in=seatings)
         return super().get_queryset()
 
 
@@ -54,6 +53,24 @@ class ShowsAPIView(generics.ListCreateAPIView):
     serializer_class = ShowSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+    def get_serializer_class(self, *args, **kwargs):
+        user = self.request.user
+        if self.request.method in ["POST", "post"]:
+            return CreateShowSerializer
+        else:
+            if not user.is_staff or not user.is_superuser:
+                return ShowListSerializer
+            return ShowSerializer
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        serializer = CreateShowSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            mixin = CreateShowMixin(data=data)
+            mixin.run()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ShowDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Show.objects.all()
@@ -64,22 +81,6 @@ class ShowDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 ### SEATING VIEWS
-class GenerateSeatingArrangementAPIView(generics.CreateAPIView):
-    serializer_class = SeatingArrangementSerializer
-
-    def post(self, request, *args, **kwargs):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid(raise_exception=True):
-            try:
-                generator = SeatingArrangementGenerator(data=data)
-                generator.generate_seating_arrangement()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class TheaterSeatingAPIView(generics.ListAPIView):
     queryset = TheaterSeating.objects.all()
     serializer_class = TheaterSeatingSerializer
