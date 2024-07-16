@@ -1,0 +1,11 @@
+celery
+Django
+django-cors-headers
+django-filter
+djangorestframework
+djangorestframework-simplejwt
+psycopg2-binary
+redis
+drf_yasg
+gunicorn
+pytest-django
