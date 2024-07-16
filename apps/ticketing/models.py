@@ -8,7 +8,7 @@ class Theater(AbstractBaseModel):
     location = models.JSONField(null=True)
     location_description = models.CharField(max_length=255)
     town = models.CharField(max_length=255)
-    number_of_seats = models.IntegerField(default=1)
+    number_of_seats = models.IntegerField()
     number_of_screens = models.IntegerField(default=1)
     opened_on = models.DateField(null=True)
 
@@ -19,7 +19,7 @@ class Theater(AbstractBaseModel):
 class Show(models.Model):
     title = models.CharField(max_length=255)
     theater = models.ForeignKey(Theater, on_delete=models.CASCADE)
-    ticket_cost = models.DecimalField(max_digits=100, decimal_places=2, default=0)
+    ticket_cost = models.DecimalField(max_digits=100, decimal_places=2)
     date = models.DateField()
     show_time = models.TimeField()
 

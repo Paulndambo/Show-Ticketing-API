@@ -4,28 +4,24 @@ from apps.reservations.models import Reservation
 
 
 class SeatReservationMixin(object):
-    def __init__(self, data):
+    def __init__(self, data, user):
         self.data = data
+        self.user = user
 
     
     def run(self):
         self.__reserve_seat()
     
     def __reserve_seat(self):
-        user_id = self.data.get("customer")
         show_id = self.data.get("show")
-        seat_id = self.data.get("seat")
+        seats = self.data.get("seats")
         total_cost = self.data.get("total_cost")
 
-        user = User.objects.get(id=user_id)
         show = Show.objects.get(id=show_id)
-        seat = TheaterSeating.objects.get(id=seat_id)
-
-        if seat.booked:
-            raise ValueError("This seat has already been booked")
-        
+        seat = TheaterSeating.objects.filter(id__in=seats)
+  
         Reservation.objects.create(
-            user=user,
+            user=self.user,
             show=show,
             seat=seat,
             total_cost=total_cost
@@ -33,4 +29,3 @@ class SeatReservationMixin(object):
 
         seat.booked = True
         seat.save()
-        

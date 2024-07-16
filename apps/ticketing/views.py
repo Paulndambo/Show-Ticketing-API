@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from datetime import datetime
 
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 from apps.ticketing.models import Theater, TheaterSeating, Show
@@ -22,6 +25,17 @@ class TheatreAPIView(generics.ListCreateAPIView):
     serializer_class = TheaterSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+    def get_queryset(self):
+        theater = self.request.query_params.get("theater")
+        specified_date = self.request.query_params.get("date")
+
+        if theater and specified_date:
+            search_date = datetime.strptime(specified_date, '%Y-%m-%d').date()
+            #print(f"Theater: {theater}, String Date: {type(specified_date)}, Date: {type(search_date)}")
+            seatings = TheaterSeating.objects.filter(seating_date=search_date).distinct("theater")
+            print(seatings)
+
+        return super().get_queryset()
 
 class TheaterDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
@@ -29,7 +43,6 @@ class TheaterDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
     lookup_field = "pk"
-
 
 ## Shows views
 class ShowsAPIView(generics.ListCreateAPIView):
@@ -63,9 +76,10 @@ class GenerateSeatingArrangementAPIView(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TheaterSeatingAPIView(generics.ListCreateAPIView):
+class TheaterSeatingAPIView(generics.ListAPIView):
     queryset = TheaterSeating.objects.all()
     serializer_class = TheaterSeatingSerializer
+    filterset_fields = ["theater", "booked"]
 
 
 class TheaterSeatingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):

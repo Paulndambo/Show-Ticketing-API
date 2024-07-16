@@ -21,6 +21,14 @@ class SeatingArrangementSerializer(serializers.Serializer):
 
 
 class TheaterSeatingSerializer(serializers.ModelSerializer):
+    theater_name = serializers.SerializerMethodField()
+    show_title = serializers.SerializerMethodField()
     class Meta:
         model = TheaterSeating
         fields = "__all__"
+
+    def get_theater_name(self, obj):
+        return obj.theater.name if obj.theater else None
+    
+    def get_show_title(self, obj):
+        return obj.show.title if obj.show else None

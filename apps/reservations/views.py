@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from apps.reservations.models import Reservation
 from apps.reservations.serializers import ReservationSerializer, ReserveSeatSerializer
@@ -22,8 +23,10 @@ class ReservationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class ReserveSeatAPIView(generics.CreateAPIView):
     serializer_class = ReserveSeatSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        user = request.user
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
@@ -31,7 +34,7 @@ class ReserveSeatAPIView(generics.CreateAPIView):
             if seat.booked:
                 return Response({ "error": "This seat is already booked" }, status=status.HTTP_400_BAD_REQUEST)
 
-            mixin = SeatReservationMixin(data=data)
+            mixin = SeatReservationMixin(data=data, user=user)
             mixin.run()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
