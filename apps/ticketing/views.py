@@ -30,12 +30,15 @@ class TheatreAPIView(generics.ListCreateAPIView):
         specified_date = self.request.query_params.get("date")
 
         if theater and specified_date:
-            search_date = datetime.strptime(specified_date, '%Y-%m-%d').date()
-            #print(f"Theater: {theater}, String Date: {type(specified_date)}, Date: {type(search_date)}")
-            seatings = TheaterSeating.objects.filter(seating_date=search_date).distinct("theater")
+            search_date = datetime.strptime(specified_date, "%Y-%m-%d").date()
+            # print(f"Theater: {theater}, String Date: {type(specified_date)}, Date: {type(search_date)}")
+            seatings = TheaterSeating.objects.filter(seating_date=search_date).distinct(
+                "theater"
+            )
             print(seatings)
 
         return super().get_queryset()
+
 
 class TheaterDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
@@ -43,6 +46,7 @@ class TheaterDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminOrReadOnly]
 
     lookup_field = "pk"
+
 
 ## Shows views
 class ShowsAPIView(generics.ListCreateAPIView):

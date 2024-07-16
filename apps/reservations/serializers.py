@@ -11,5 +11,4 @@ class ReservationSerializer(serializers.ModelSerializer):
 class ReserveSeatSerializer(serializers.Serializer):
     seats = serializers.JSONField(default=list)
     show = serializers.IntegerField()
-    total_cost = serializers.DecimalField(max_digits=100, decimal_places=2)
-    
+    ticket_cost = serializers.DecimalField(max_digits=100, decimal_places=2)
