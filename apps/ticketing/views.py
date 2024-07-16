@@ -85,10 +85,12 @@ class TheaterSeatingAPIView(generics.ListAPIView):
     queryset = TheaterSeating.objects.all()
     serializer_class = TheaterSeatingSerializer
     filterset_fields = ["theater", "booked"]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class TheaterSeatingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TheaterSeating.objects.all()
     serializer_class = TheaterSeatingSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     lookup_field = "pk"

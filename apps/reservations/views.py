@@ -19,11 +19,20 @@ from apps.reservations.methods.cancel_reservation import CancelReservationMixin
 class ReservationAPIView(generics.ListAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff or not user.is_superuser:
+            return self.queryset.filter(user=user)
+
+        return super().get_queryset()
 
 
 class ReservationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
 
     lookup_field = "pk"
 
