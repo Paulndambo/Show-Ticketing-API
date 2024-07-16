@@ -18,7 +18,7 @@ class Theater(AbstractBaseModel):
 
 class Show(models.Model):
     title = models.CharField(max_length=255)
-    theater = models.ForeignKey(Theater, on_delete=models.CASCADE)
+    theater = models.ForeignKey(Theater, on_delete=models.CASCADE, related_name="theatershows")
     ticket_cost = models.DecimalField(max_digits=100, decimal_places=2)
     date = models.DateField()
     show_time = models.TimeField()

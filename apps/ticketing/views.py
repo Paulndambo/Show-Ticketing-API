@@ -14,7 +14,7 @@ from apps.ticketing.serializers import (
     ShowSerializer,
     SeatingArrangementSerializer,
 )
-from apps.ticketing.mixins.generate_seating import SeatingArrangementGenerator
+from apps.ticketing.methods.generate_seating import SeatingArrangementGenerator
 
 from apps.core.custom_permissions import IsAdminOrReadOnly
 
