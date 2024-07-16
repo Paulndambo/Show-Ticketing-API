@@ -5,6 +5,8 @@ from rest_framework.response import Response
 
 from apps.reservations.models import Reservation
 from apps.reservations.serializers import ReservationSerializer, ReserveSeatSerializer
+from apps.ticketing.models import TheaterSeating
+from apps.reservations.methods.reserve_seat import SeatReservationMixin
 # Create your views here.
 class ReservationAPIView(generics.ListAPIView):
     queryset = Reservation.objects.all()
@@ -25,5 +27,12 @@ class ReserveSeatAPIView(generics.CreateAPIView):
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
+            seat = TheaterSeating.objects.get(id=data.get("seat"))
+            if seat.booked:
+                return Response({ "error": "This seat is already booked" }, status=status.HTTP_400_BAD_REQUEST)
+
+            mixin = SeatReservationMixin(data=data)
+            mixin.run()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
