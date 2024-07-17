@@ -236,10 +236,10 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", "mailhog")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "mailhog")
 EMAIL_PORT = os.environ.get("EMAIL_HOST_PORT", 1025)
 EMAIL_HOST_PORT = os.environ.get("EMAIL_HOST_PORT", 1025)
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
 # EMAIL_USE_SSL=False
-DEFAULT_FROM_EMAIL = os.environ.get("SITE_EMAIL", "info@ticketing.com")
-SITE_EMAIL = os.environ.get("SITE_EMAIL", "info@ticketing.com")
+DEFAULT_FROM_EMAIL = os.environ.get("SITE_EMAIL", "noreply@yourdomain.com")
+SITE_EMAIL = os.environ.get("SITE_EMAIL", "noreply@yourdomain.com")
 EMAIL_SUBJECT = "Show Ticketing"
 
 # Cache Settings

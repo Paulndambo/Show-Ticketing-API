@@ -55,7 +55,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
       - EMAIL_HOST=mailhog
       - EMAIL_PORT=1025
-      - SITE_EMAIL=info@ticketing.com
+      - SITE_EMAIL=noreply@yourdomain.com
       - EMAIL_HOST_PASSWORD=mailhog
       - EMAIL_HOST_USER=mailhog
     depends_on:
