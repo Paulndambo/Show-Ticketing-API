@@ -17,7 +17,7 @@ from apps.reservations.methods.cancel_reservation import CancelReservationMixin
 
 # Create your views here.
 class ReservationAPIView(generics.ListAPIView):
-    queryset = Reservation.objects.all()
+    queryset = Reservation.objects.all().order_by("-created")
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
 
@@ -30,7 +30,7 @@ class ReservationAPIView(generics.ListAPIView):
 
 
 class ReservationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Reservation.objects.all()
+    queryset = Reservation.objects.all().order_by("-created")
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
 

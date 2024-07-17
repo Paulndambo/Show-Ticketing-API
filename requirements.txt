@@ -10,3 +10,6 @@ drf_yasg
 gunicorn
 pytest-django
 setuptools
+drf-extensions
+django-redis
+django-debug-toolbar

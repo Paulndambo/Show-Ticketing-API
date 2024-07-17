@@ -16,7 +16,7 @@ class Theater(AbstractBaseModel):
         return self.name
 
 
-class Show(models.Model):
+class Show(AbstractBaseModel):
     title = models.CharField(max_length=255)
     theater = models.ForeignKey(
         Theater, on_delete=models.CASCADE, related_name="theatershows"
@@ -24,6 +24,7 @@ class Show(models.Model):
     ticket_cost = models.DecimalField(max_digits=100, decimal_places=2)
     show_date = models.DateField()
     show_time = models.TimeField()
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title

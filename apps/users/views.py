@@ -20,6 +20,10 @@ class RegisterUserAPIView(generics.CreateAPIView):
             user = serializer.save()
             user.set_password(user.password)
             user.save()
+            if user.role == "Admin":
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
             return Response(
                 {"message": "User registered successfully"},
                 status=status.HTTP_201_CREATED,

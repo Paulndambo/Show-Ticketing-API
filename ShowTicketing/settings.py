@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_filters",
     "drf_yasg",
+    "debug_toolbar",
+
+    
     # My apps
     "apps.core",
     "apps.users",
@@ -54,6 +57,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -201,8 +205,8 @@ SIMPLE_JWT = {
 }
 
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://34.123.255.211:6379/1")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://34.123.255.211:6379/1")  # URL for Redis as the backend
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://34.123.255.211:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://34.123.255.211:6379/0")  # URL for Redis as the backend
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -219,6 +223,10 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 30,
         'args': (16, 16)
     },
+    'mark-shows-as-inactive': {
+        'task': 'apps.notifications.tasks.mark_past_shows_as_inactive',
+        'schedule': 60 * 60 * 24
+    }
 }
 
 # Email configurations
@@ -233,3 +241,21 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "digicafeteria@gmail.com"
 SITE_EMAIL = "digicafeteria@gmail.com"
 EMAIL_SUBJECT = "Show Ticketing"
+
+# Cache Settings
+REDIS_CACHE_BACKEND = os.environ.get("CELERY_BROKER_URL", "redis://34.123.255.211:6379/0")
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_CACHE_BACKEND,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]

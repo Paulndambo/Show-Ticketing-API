@@ -5,6 +5,9 @@ from apps.notifications.mixins import SendMessage
 from apps.reservations.models import Reservation
 from apps.ticketing.models import Show
 from apps.users.models import User
+from datetime import datetime
+
+date_today = datetime.now().date()
 
 @shared_task
 def add(x, y):
@@ -16,6 +19,9 @@ def print_hello_world():
 
 @shared_task
 def seat_reservation_task(user_id, show_id, tickets: list):
+    """
+    When a customer reserves a seat, they should receive an email notification
+    """
     user = User.objects.get(id=user_id)
     show = Show.objects.get(id=show_id)
     print(user.email, f"{user.first_name} {user.last_name}", show.title, tickets)
@@ -41,3 +47,14 @@ def seat_reservation_task(user_id, show_id, tickets: list):
     except Exception as e:
         raise e
     print("Task was reached!!!")
+
+
+"""
+When the show date passes, the show should be marked as inactive
+"""
+@shared_task
+def mark_past_shows_as_inactive():
+    past_shows = Show.objects.filter(show_date=date_today)
+    if len(past_shows) == 0:
+        return
+    past_shows.update(active=False)
