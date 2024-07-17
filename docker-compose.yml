@@ -72,7 +72,7 @@ services:
       - db 
       - web
       - celery
-      - celery_beat
+      - celery-beat
     
 volumes:
   postgres_data:
