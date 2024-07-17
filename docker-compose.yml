@@ -18,6 +18,11 @@ services:
       - DATABASE_HOST=postgres_db
       - CELERY_BROKER_URL=redis://34.123.255.211:6379/0
       - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
+      - SITE_EMAIL=info@ticketing.com
+      - EMAIL_HOST_PASSWORD=mailhog
+      - EMAIL_HOST_USER=mailhog
     depends_on:
       - db
 
@@ -57,6 +62,17 @@ services:
       - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
     depends_on:
       - db
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    depends_on:
+      - db 
+      - web
+      - celery
+      - celery_beat
     
 volumes:
   postgres_data:

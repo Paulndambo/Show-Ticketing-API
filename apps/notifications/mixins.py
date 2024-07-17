@@ -5,7 +5,11 @@ from django.template.loader import get_template
 from django.utils.html import strip_tags
 
 
-class SendMessage(object):    
+class SendMessage(object): 
+    """
+    This class contains methods for sending different types of notifications,
+    Each type of notification e.g sms/email will have custom configurations
+    """   
     def send_sms(self):
         pass
 
@@ -22,8 +26,8 @@ class SendMessage(object):
             message = strip_tags(html_message)
         
             headers = {
-                "Reply-To": "digicafeteria@gmail.com",
-                "From": "digicafeteria@gmail.com",
+                "Reply-To": settings.SITE_EMAIL,
+                "From": settings.SITE_EMAIL,
             }
 
             subject = "{0} - {1}".format(settings.EMAIL_SUBJECT, context_data["subject"])

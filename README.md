@@ -8,6 +8,7 @@ Application functionality;
 - Show Management.
 - Seat Arrangment Management.
 - Seat Reservation.
+- Seat Reservation notification
 
 
 # Notes
@@ -16,6 +17,8 @@ These are the guidelines on which the application is built;-
 2. For every show, the admin has the ability to decide the seating arrangement. This means, Even though the number of available seats remains the same(remember this is determined by the capacity of the theater), The admin will be able to decide on the number of rows, which will then be the basis on which the seat numbers are generated.
 3. For simplicity purposes, it is assumed that all seats will cost the same.
 4. A theater is considered available on a specific date if it does not have a show planned on that date.
+
+
 
 # Assessment Parts samples requests & Payloads
 - BASE_URL ```http://localhost:8000```
@@ -115,7 +118,7 @@ curl  -X GET \
 - List available seats selected theater.
 ```sql
 curl  -X GET \
-  'http://127.0.0.1:8000/theaters/seatings/?theater=2&booked=true' \
+  'http://127.0.0.1:8000/theaters/seatings/?theater=2&booked=false' \
   --header 'Accept: */*' \
   --header 'Authorization: Bearer {{token}}'
 ```
