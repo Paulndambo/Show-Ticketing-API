@@ -3,6 +3,8 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from apps.notifications.mixins import SendMessage
 from apps.reservations.models import Reservation
+from apps.ticketing.models import Show
+from apps.users.models import User
 
 @shared_task
 def add(x, y):
@@ -12,7 +14,10 @@ def add(x, y):
 def print_hello_world():
     print("Hello World, am running using celery")
 
-def seat_reservation_task(user, show, tickets: list):
+@shared_task
+def seat_reservation_task(user_id, show_id, tickets: list):
+    user = User.objects.get(id=user_id)
+    show = Show.objects.get(id=show_id)
     print(user.email, f"{user.first_name} {user.last_name}", show.title, tickets)
     try:
         reservations = Reservation.objects.filter(id__in=tickets)

@@ -37,7 +37,7 @@ class SeatReservationMixin(object):
         seat.booked = True
         seat.save()
 
-        seat_reservation_task(self.user, show, [reservation.id])
+        seat_reservation_task.delay(self.user.id, show.id, [reservation.id])
 
 
     @transaction.atomic
@@ -65,4 +65,4 @@ class SeatReservationMixin(object):
         print(reservations_list)
 
         reservations_ids = [x.id for x in reservations_list]
-        seat_reservation_task(self.user, show, reservations_ids)
+        seat_reservation_task.delay(self.user.id, show.id, reservations_ids)
