@@ -18,6 +18,80 @@ These are the guidelines on which the application is built;-
 3. For simplicity purposes, it is assumed that all seats will cost the same.
 4. A theater is considered available on a specific date if it does not have a show planned on that date.
 
+# Additionals
+1. The test email server (mailhog) is accessible on: <link>http://34.173.224.151:8025/</link>
+2. The test redis server is accessible on: <link>http://34.123.255.211:8001/</link>
+3. A deployed version of the project is accessible on: <link>http://34.173.224.151:8000</link>
+
+# How to run
+### Clone the repo
+1. You can clone the repo using any of the following commands
+```sql
+git clone https://github.com/Paulndambo/Show-Ticketing-API.git
+```
+or
+```sql
+git clone git@github.com:Paulndambo/Show-Ticketing-API.git
+```
+
+2. After cloning the repo ()
+- Change directory into cloned folder using;-
+```sql 
+cd Show-Ticketing-API
+```
+
+- Create a virtual environment for the project using;-
+```sql
+python -m venv venv
+```
+or
+```sql 
+python3 -m venv venv
+```
+- Install required packages using the command;-
+```sql
+pip install -r requirements.txt
+```
+
+- Activate the virtual environment, using the command;-
+```sql
+source venv/bin/activate
+```
+or 
+```sql
+source venv/Scripts/activate
+```
+
+- Start Server, using the command;-
+```sql
+python manage.py runserver
+```
+or 
+```sql
+python3 manage.py runserver
+```
+
+- The server is now accessible on <link>http://127.0.0.1:8000</link>
+
+2. Running Using Docker
+To run the project using docker, use the command below;-
+```sql
+docker compose up --build
+```
+
+### Running tests
+- Using pytest
+```sql
+pytest -s -v
+```
+- Using builtin test command
+```sql
+python manage.py test
+```
+or
+```sql
+python3 manage.py test
+```
 
 
 # Assessment Parts samples requests & Payloads
