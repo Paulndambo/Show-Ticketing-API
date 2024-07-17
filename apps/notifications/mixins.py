@@ -8,12 +8,28 @@ from django.utils.html import strip_tags
 class SendMessage(object): 
     """
     This class contains methods for sending different types of notifications,
-    Each type of notification e.g sms/email will have custom configurations
+    Each type of notification e.g sms/email will have custom configurations.
+
+    args:
+        - None.
+    returns:
+        - None.
     """   
     def send_sms(self):
         pass
 
     def send_mail(self, context_data, recipient_list, template=None):
+        """
+        This method is responsible of sending email notifications to customers/users.
+
+        args:
+            - context_data: custom data that is being send to the user.
+            - recipient_list: list of people to receive an email.
+            - template: The html file on which will make up the body of the email.
+
+        returns:
+            - None
+        """
         try:
             from_email = settings.SITE_EMAIL
             context_data["email_date"] = str(date.today())

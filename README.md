@@ -8,8 +8,16 @@ Application functionality;
 - Show Management.
 - Seat Arrangment Management.
 - Seat Reservation.
-- Seat Reservation notification
+- Seat Reservation notification.
+- Reservation Cancellation.
 
+# Models
+- Theater: Contains information about movie theaters.
+- Show: A show happening in a certain theater on a certain day.
+- TheaterSeating: Contains information on seating arrangement for a certain show in a certain theater.
+- Reservation: Contains information about seat reservations.
+- User: Information about users.
+- AbstractBaseModel: contains information that is common to all models.
 
 # Notes
 These are the guidelines on which the application is built;-

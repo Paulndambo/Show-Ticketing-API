@@ -7,6 +7,16 @@ from apps.notifications.tasks import seat_reservation_task
 
 
 class SeatReservationMixin(object):
+    """
+    This class deals with seat reservation
+
+    args: 
+        - data: payload to reserve a seat.
+        - user: the person reserving a seat.
+
+    returns:
+        - None
+    """
     def __init__(self, data, user):
         self.data = data
         self.user = user
@@ -19,6 +29,9 @@ class SeatReservationMixin(object):
 
     @transaction.atomic
     def __reserve_single_seat(self):
+        """
+        This method is invoked when a customer is reserving one seat
+        """
         show_id = self.data.get("show")
         seats = self.data.get("seats")
         ticket_cost = self.data.get("ticket_cost")
@@ -42,6 +55,9 @@ class SeatReservationMixin(object):
 
     @transaction.atomic
     def __reserve_multi_ticket(self):
+        """
+        This function is invoked when a customer is reserving more than one seats
+        """
         show_id = self.data.get("show")
         seats = self.data.get("seats")
         ticket_cost = self.data.get("ticket_cost")
@@ -61,8 +77,6 @@ class SeatReservationMixin(object):
         ]
         reservations_list = Reservation.objects.bulk_create(reservations)
         booked_seats.update(booked=True)
-
-        print(reservations_list)
 
         reservations_ids = [x.id for x in reservations_list]
         seat_reservation_task.delay(self.user.id, show.id, reservations_ids)

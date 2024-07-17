@@ -5,6 +5,16 @@ from apps.reservations.models import Reservation
 
 
 class CancelReservationMixin(object):
+    """
+    This class deals with all the logic around cancelling a reservation.
+
+    args:
+        - data: payload containing reservations to cancel.
+        - user: the owner of the reservation.
+
+    returns:
+        - None.
+    """
     def __init__(self, data, user):
         self.data = data
         self.user = user

@@ -1,8 +1,17 @@
 from django.db import transaction
-from apps.ticketing.models import Theater, Show, TheaterSeating
+from apps.ticketing.models import Show, TheaterSeating
 
 
 class CreateShowMixin(object):
+    """
+    This class contains all the logic need to create a new show.
+
+    args:
+        - data: payload to create a show.
+
+    returns: 
+         - None.
+    """
     def __init__(self, data):
         self.data = data
 
@@ -22,6 +31,15 @@ class CreateShowMixin(object):
         return show
 
     def __generate_seating_arrangement(self, show):
+        """
+        This method is used to generate the seating arrangement for a certain show in a certain theater.
+
+        args:
+            - show: The show for which the arrangement is need.
+
+        returns:
+            - None
+        """
         try:
             number_of_rows = self.data.get("seating_arrangement")["number_of_rows"]
             number_of_seats = show.theater.number_of_seats
@@ -36,7 +54,7 @@ class CreateShowMixin(object):
             seats = []
 
             for row in range(1, number_of_rows + 1):
-                row_letter = chr(64 + row)  # Convert row number to corresponding letter
+                row_letter = chr(64 + row)  # Converting row number to corresponding letter
 
                 # Determine the number of seats in the current row
                 if row == number_of_rows:
