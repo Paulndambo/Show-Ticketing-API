@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: django_web
+    command: gunicorn ShowTicketing.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost
+      - POSTGRES_DB=ticketing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - DATABASE_HOST=postgres_db
+      - CELERY_BROKER_URL=redis://localhost:6379/1
+      - CELERY_RESULT_BACKEND=redis://localhost:6379/1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=ticketing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  #redis:
+  #  image: redis:6
+  #  container_name: redis_cache
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A ShowTicketing worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=redis://localhost:6379/1
+      - CELERY_RESULT_BACKEND=redis://localhost:6379/1
+    depends_on:
+      - db
+  
+
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A ShowTicketing beat --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=redis://localhost:6379/1
+      - CELERY_RESULT_BACKEND=redis://localhost:6379/1
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

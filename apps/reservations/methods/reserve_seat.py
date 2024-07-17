@@ -3,6 +3,8 @@ from apps.users.models import User
 from apps.ticketing.models import TheaterSeating, Show
 from apps.reservations.models import Reservation
 
+from apps.notifications.tasks import seat_reservation_task
+
 
 class SeatReservationMixin(object):
     def __init__(self, data, user):
@@ -24,7 +26,7 @@ class SeatReservationMixin(object):
         show = Show.objects.get(id=show_id)
         seat = TheaterSeating.objects.get(id=seats[0])
 
-        Reservation.objects.create(
+        reservation = Reservation.objects.create(
             user=self.user,
             show=show,
             seat=seat,
@@ -34,6 +36,9 @@ class SeatReservationMixin(object):
 
         seat.booked = True
         seat.save()
+
+        seat_reservation_task(self.user, show, [reservation.id])
+
 
     @transaction.atomic
     def __reserve_multi_ticket(self):
@@ -54,5 +59,10 @@ class SeatReservationMixin(object):
             )
             for seat in booked_seats
         ]
-        Reservation.objects.bulk_create(reservations)
+        reservations_list = Reservation.objects.bulk_create(reservations)
         booked_seats.update(booked=True)
+
+        print(reservations_list)
+
+        reservations_ids = [x.id for x in reservations_list]
+        seat_reservation_task(self.user, show, reservations_ids)

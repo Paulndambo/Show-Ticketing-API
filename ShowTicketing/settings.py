@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-
+from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -69,7 +69,7 @@ ROOT_URLCONF = "ShowTicketing.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -99,11 +99,11 @@ DATABASES = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ticketing",
-        "HOST": "localhost",
-        "USER": "postgres",
+        "NAME": os.environ.get("POSTGRES_DB", "ticketing"),
+        "HOST": os.environ.get("DATABASE_HOST", "localhost"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PORT": "5432",
-        "PASSWORD": "1234",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "1234"),
     }
 }
 
@@ -201,4 +201,35 @@ SIMPLE_JWT = {
 }
 
 
-CELERY_BROKER_URL = "redis://34.123.255.211:8001/1"
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://34.123.255.211:6379/1")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://34.123.255.211:6379/1")  # URL for Redis as the backend
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'run-every-5-seconds': {
+        'task': 'apps.notifications.tasks.print_hello_world',
+        'schedule': 5,
+    },
+    'add-every-30-seconds': {
+        'task': 'apps.notifications.tasks.add',
+        'schedule': 30,
+        'args': (16, 16)
+    },
+}
+
+# Email configurations
+EMAIL_HOST_PASSWORD = "akacnconppcdpeth"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "digicafeteria@gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_PORT = 587
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL=False
+DEFAULT_FROM_EMAIL = "digicafeteria@gmail.com"
+SITE_EMAIL = "digicafeteria@gmail.com"
+EMAIL_SUBJECT = "Show Ticketing"

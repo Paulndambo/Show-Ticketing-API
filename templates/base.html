@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Purchase Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #4CAF50;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .details th, .details td {
+            padding: 10px;
+            text-align: left;
+        }
+        .details th {
+            background-color: #f4f4f4;
+        }
+        .details td {
+            background-color: #ffffff;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #777777;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        thead {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{action_type}}</h1>
+        </div>
+        <div class="content">
+            <h2>Thank you for your purchase, {{name}}!</h2>
+            <h3>Show Title: {{show_title}}</h3>
+            <h3>Show Time: {{show_date}} {{show_time}}</h3>
+            <p>We are excited to confirm your movie ticket purchase. Here are your ticket details:</p>
+            {% block content %}
+            {% endblock %}
+            <p>We look forward to seeing you at the theater. Enjoy your movie!</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Movie Ticketing Platform. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

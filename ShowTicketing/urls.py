@@ -41,6 +41,7 @@ urlpatterns = [
     path("users/", include("apps.users.urls")),
     path("theaters/", include("apps.ticketing.urls")),
     path("reservations/", include("apps.reservations.urls")),
+    path("notifications/", include("apps.notifications.urls")),
     path(
         "docs/",
         schema_view.with_ui("swagger", cache_timeout=0),
