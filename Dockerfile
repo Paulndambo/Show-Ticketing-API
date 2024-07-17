@@ -16,6 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code to the container
 COPY . .
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
 
 
 EXPOSE 8000

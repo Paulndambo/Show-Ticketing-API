@@ -9,3 +9,4 @@ redis
 drf_yasg
 gunicorn
 pytest-django
+setuptools

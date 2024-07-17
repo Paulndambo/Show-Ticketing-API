@@ -20,6 +20,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://localhost:6379/1
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:13
@@ -31,9 +32,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  #redis:
-  #  image: redis:6
-  #  container_name: redis_cache
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"  # Expose the web UI port
+    environment:
+      - REDIS_ARGS=--port 6379 --loadmodule /usr/lib/redis/modules/redisearch.so --loadmodule /usr/lib/redis/modules/redistimeseries.so --loadmodule /usr/lib/redis/modules/redisgraph.so --loadmodule /usr/lib/redis/modules/rejson.so --loadmodule /usr/lib/redis/modules/redisbloom.so --loadmodule /usr/lib/redis/modules/redisai.so --loadmodule /usr/lib/redis/modules/redistimeseries.so --loadmodule /usr/lib/redis/modules/redisgears.so
+      - HTTP_PORT=8001  # Set the web UI port
 
   celery:
     build: .
@@ -46,6 +53,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://localhost:6379/1
     depends_on:
       - db
+      - redis
   
 
   celery-beat:
@@ -59,6 +67,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://localhost:6379/1
     depends_on:
       - db
+      - redis
 
 volumes:
   postgres_data:
