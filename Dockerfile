@@ -16,11 +16,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code to the container
 COPY . .
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
 
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8000
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start Gunicorn with 3 workers
 CMD ["gunicorn", "ShowTicketing.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
