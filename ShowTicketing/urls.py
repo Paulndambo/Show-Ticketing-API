@@ -24,16 +24,16 @@ from drf_yasg import openapi
 
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Show Ticketing API",
-      default_version='v1',
-      description="This is the show ticketing backend service",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="paulkadabo@gmail.com"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Show Ticketing API",
+        default_version="v1",
+        description="This is the show ticketing backend service",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="paulkadabo@gmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -41,5 +41,9 @@ urlpatterns = [
     path("users/", include("apps.users.urls")),
     path("theaters/", include("apps.ticketing.urls")),
     path("reservations/", include("apps.reservations.urls")),
-    path("docs/", schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui')
+    path(
+        "docs/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
 ]

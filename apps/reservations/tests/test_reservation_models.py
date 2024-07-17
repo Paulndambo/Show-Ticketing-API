@@ -3,6 +3,7 @@ from apps.reservations.models import Reservation
 from apps.users.models import User
 from apps.ticketing.models import Theater, Show, TheaterSeating
 
+
 class ReservationTestCase(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create(
@@ -14,7 +15,7 @@ class ReservationTestCase(TestCase):
             gender="Female",
             role="Admin",
             is_staff=True,
-            is_superuser=True
+            is_superuser=True,
         )
         self.user.set_password("1234")
         self.user.save()
@@ -26,7 +27,7 @@ class ReservationTestCase(TestCase):
             town="Juja",
             number_of_seats=1,
             number_of_screens=1,
-            opened_on="2024-07-16"
+            opened_on="2024-07-16",
         )
 
         self.show = Show.objects.create(
@@ -34,14 +35,14 @@ class ReservationTestCase(TestCase):
             theater=self.theater,
             ticket_cost=500,
             show_date="2024-08-01",
-            show_time="16:00"
+            show_time="16:00",
         )
         self.seat = TheaterSeating.objects.create(
             theater=self.theater,
             show=self.show,
             seat_number="A1",
             booked=False,
-            seating_date="2024-08-01"
+            seating_date="2024-08-01",
         )
         self.reservation = Reservation.objects.create(
             user=self.user,
@@ -50,13 +51,13 @@ class ReservationTestCase(TestCase):
             ticket_cost=self.show.ticket_cost,
             reservation_type="Single Ticket",
             status="Active",
-            notification_send=False
+            notification_send=False,
         )
         self.reservation.seat.booked = True
         self.reservation.seat.save()
 
         return super().setUp()
-    
+
     def test_reservation_can_be_created(self):
         self.assertEqual(Reservation.objects.count(), 1)
         self.assertEqual(self.reservation.status, "Active")
@@ -73,7 +74,6 @@ class ReservationTestCase(TestCase):
         self.assertEqual(self.reservation.status, "Cancelled")
         self.assertEqual(self.reservation.seat.booked, False)
 
-
     def test_reservation_can_be_reset(self):
         self.reservation.status = "Active"
         self.reservation.save()
@@ -85,11 +85,12 @@ class ReservationTestCase(TestCase):
         self.assertEqual(self.reservation.seat.booked, True)
 
     def test_reservation_cost_equals_show_ticket_cost(self):
-        self.assertEqual(self.reservation.ticket_cost, self.reservation.show.ticket_cost)
+        self.assertEqual(
+            self.reservation.ticket_cost, self.reservation.show.ticket_cost
+        )
 
     def test_reservation_notification_is_not_send_by_default(self):
         self.assertEqual(self.reservation.notification_send, False)
-
 
     def test_reservation_can_be_deleted(self):
         self.reservation.delete()

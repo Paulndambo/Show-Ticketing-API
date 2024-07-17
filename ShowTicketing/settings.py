@@ -162,11 +162,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     }
 }
 
@@ -205,4 +201,4 @@ SIMPLE_JWT = {
 }
 
 
-CELERY_BROKER_URL = 'redis://34.123.255.211:8001/1'
+CELERY_BROKER_URL = "redis://34.123.255.211:8001/1"

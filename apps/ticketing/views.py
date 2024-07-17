@@ -68,7 +68,7 @@ class ShowsAPIView(generics.ListCreateAPIView):
         if serializer.is_valid(raise_exception=True):
             mixin = CreateShowMixin(data=data)
             mixin.run()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

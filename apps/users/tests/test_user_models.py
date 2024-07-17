@@ -1,6 +1,7 @@
 from django.test import TestCase
 from apps.users.models import User
 
+
 class CustomerUserModelTestCase(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create(
@@ -10,7 +11,7 @@ class CustomerUserModelTestCase(TestCase):
             email="johndoe@gmail.com",
             phone_number="0712345678",
             gender="Male",
-            role="Customer"
+            role="Customer",
         )
         return super().setUp()
 
@@ -45,7 +46,7 @@ class CustomerUserModelTestCase(TestCase):
     def test_user_can_be_deleted(self):
         self.user.delete()
         with self.assertRaises(User.DoesNotExist):
-            User.objects.get(username='johndoe')
+            User.objects.get(username="johndoe")
 
 
 class AdminUserModelTestCase(TestCase):
@@ -59,10 +60,10 @@ class AdminUserModelTestCase(TestCase):
             gender="Female",
             role="Admin",
             is_staff=True,
-            is_superuser=True
+            is_superuser=True,
         )
         return super().setUp()
-    
+
     def test_admin_user_can_be_created(self):
         self.assertEqual(str(self.user), "Jane Doe")
         self.assertIsInstance(self.user, User)
@@ -94,4 +95,4 @@ class AdminUserModelTestCase(TestCase):
     def test_user_can_be_deleted(self):
         self.user.delete()
         with self.assertRaises(User.DoesNotExist):
-            User.objects.get(username='jandoe')
+            User.objects.get(username="jandoe")

@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 
 from apps.users.models import User
 
+
 class UserAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.register_url = reverse("register")
@@ -20,12 +21,12 @@ class UserAPITestCase(APITestCase):
             "phone_number": "0712345678",
             "gender": "Male",
             "role": "Customer",
-            "password": "1234"
+            "password": "1234",
         }
-        response = self.client.post(self.register_url, data, format='json')
+        response = self.client.post(self.register_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(User.objects.get().first_name, 'John')
+        self.assertEqual(User.objects.get().first_name, "John")
 
     def test_user_can_login(self):
         user = User.objects.create(
@@ -35,16 +36,13 @@ class UserAPITestCase(APITestCase):
             email="janedoe@gmail.com",
             phone_number="0712345678",
             gender="Female",
-            role="Customer"
+            role="Customer",
         )
         user.set_password("1234")
         user.save()
-        
-        login_payload = {
-            "username": "janedoe",
-            "password": "1234"
-        }
-        response = self.client.post(self.login_url, login_payload, format='json')
+
+        login_payload = {"username": "janedoe", "password": "1234"}
+        response = self.client.post(self.login_url, login_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(response.json(), dict)
 
@@ -58,26 +56,20 @@ class UserAPITestCase(APITestCase):
             gender="Female",
             role="Customer",
             is_staff=False,
-            is_superuser=False
+            is_superuser=False,
         )
         user.set_password("1234")
         user.save()
 
-        login_payload = {
-            "username": "janedoe",
-            "password": "1234"
-        }
-        response = self.client.post(self.login_url, login_payload, format='json') 
+        login_payload = {"username": "janedoe", "password": "1234"}
+        response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
 
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        headers = {"Authorization": f"Bearer {token}"}
 
         users_response = self.client.get(self.user_list_url, headers=headers)
         self.assertEqual(users_response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(users_response.json()["results"][0], dict)
-
 
     def test_only_admin_can_see_all_users(self):
         user = User.objects.create(
@@ -89,21 +81,16 @@ class UserAPITestCase(APITestCase):
             gender="Female",
             role="Admin",
             is_staff=True,
-            is_superuser=True
+            is_superuser=True,
         )
         user.set_password("1234")
         user.save()
 
-        login_payload = {
-            "username": "janedoe",
-            "password": "1234"
-        }
-        response = self.client.post(self.login_url, login_payload, format='json') 
+        login_payload = {"username": "janedoe", "password": "1234"}
+        response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
 
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        headers = {"Authorization": f"Bearer {token}"}
 
         users_response = self.client.get(self.user_list_url, headers=headers)
         self.assertEqual(users_response.status_code, status.HTTP_200_OK)
