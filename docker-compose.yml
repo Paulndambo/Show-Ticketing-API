@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=ticketing
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1234
-      - DATABASE_HOST=postgres_db
+      - DATABASE_HOST=db
       - CELERY_BROKER_URL=redis://34.123.255.211:6379/0
       - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
       - EMAIL_HOST=mailhog
