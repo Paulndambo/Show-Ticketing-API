@@ -43,8 +43,6 @@ services:
     command: python3 manage.py init_consumer
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
     environment:
       - DEBUG=1
       - DJANGO_ALLOWED_HOSTS=localhost

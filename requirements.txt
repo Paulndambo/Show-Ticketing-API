@@ -13,3 +13,4 @@ setuptools
 drf-extensions
 django-redis
 django-debug-toolbar
+pika
