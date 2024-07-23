@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from apps.ticketing.models import Show, Theater
 
+
 class ShowAPIsTestCase(APITestCase):
     def setUp(self) -> None:
         self.theater = Theater.objects.create(
@@ -49,15 +50,13 @@ class ShowAPIsTestCase(APITestCase):
             "ticket_cost": 500,
             "show_date": "2024-08-01",
             "show_time": "16:00",
-            "seating_arrangement": {
-                "number_of_rows": 7
-            }
+            "seating_arrangement": {"number_of_rows": 7},
         }
 
         self.login_url = reverse("login")
         self.shows_url = reverse("shows")
         return super().setUp()
-    
+
     def test_customers_cannot_create_shows(self):
         login_payload = {"username": self.customer_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
@@ -65,7 +64,9 @@ class ShowAPIsTestCase(APITestCase):
 
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.post(self.shows_url, self.sample_data, headers=headers, format='json')
+        response = self.client.post(
+            self.shows_url, self.sample_data, headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admins_can_create_shows(self):
@@ -74,12 +75,15 @@ class ShowAPIsTestCase(APITestCase):
         token = response.json()["access"]
 
         headers = {"Authorization": f"Bearer {token}"}
-        response = self.client.post(self.shows_url, self.sample_data, headers=headers, format='json')
+        response = self.client.post(
+            self.shows_url, self.sample_data, headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_users_can_fetch_shows(self):
         response = self.client.get(self.shows_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.json())
         self.assertIsInstance(response.json()["results"], list)
 
     def test_show_can_be_updated(self):
@@ -102,13 +106,15 @@ class ShowAPIsTestCase(APITestCase):
             "ticket_cost": 1500,
             "show_date": "2024-08-01",
             "show_time": "16:00",
-            "seating_arrangement": {
-                "number_of_rows": 7
-            }
+            "seating_arrangement": {"number_of_rows": 7},
         }
-        update_response = self.client.put(update_url, data=data, headers=headers, format='json')
+        update_response = self.client.put(
+            update_url, data=data, headers=headers, format="json"
+        )
         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Show.objects.get(id=show.id).title, "EPL Community Shield 2025")
+        self.assertEqual(
+            Show.objects.get(id=show.id).title, "EPL Community Shield 2025"
+        )
         self.assertEqual(Show.objects.get(id=show.id).ticket_cost, 1500)
         self.assertEqual(str(Show.objects.get(id=show.id).show_date), "2024-08-01")
         self.assertEqual(str(Show.objects.get(id=show.id).show_time), "16:00:00")
@@ -128,9 +134,13 @@ class ShowAPIsTestCase(APITestCase):
 
         patch_url = f"{self.shows_url}{show.id}/"
         data = {"title": "EPL Community Shield 2025", "ticket_cost": 1000}
-        update_response = self.client.patch(patch_url, data=data, headers=headers, format='json')
+        update_response = self.client.patch(
+            patch_url, data=data, headers=headers, format="json"
+        )
         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Show.objects.get(id=show.id).title, "EPL Community Shield 2025")
+        self.assertEqual(
+            Show.objects.get(id=show.id).title, "EPL Community Shield 2025"
+        )
         self.assertEqual(Show.objects.get(id=show.id).ticket_cost, 1000)
 
     def test_show_can_be_deleted(self):
@@ -147,5 +157,5 @@ class ShowAPIsTestCase(APITestCase):
         headers = {"Authorization": f"Bearer {token}"}
 
         delete_url = f"{self.shows_url}{show.id}/"
-        update_response = self.client.delete(delete_url, headers=headers, format='json')
+        update_response = self.client.delete(delete_url, headers=headers, format="json")
         self.assertEqual(update_response.status_code, status.HTTP_204_NO_CONTENT)

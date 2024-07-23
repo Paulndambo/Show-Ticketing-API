@@ -1,6 +1,7 @@
 from django.test import TestCase
 from apps.ticketing.models import TheaterSeating, Theater, Show
 
+
 class TheaterSeatingTestCase(TestCase):
     def setUp(self) -> None:
         self.theater = Theater.objects.create(
@@ -28,7 +29,7 @@ class TheaterSeatingTestCase(TestCase):
             seating_date="2024-08-01",
         )
         return super().setUp()
-    
+
     def test_seating_can_be_created(self):
         self.assertEqual(str(self.seat), "A1")
         self.assertEqual(self.seat.booked, False)
@@ -49,4 +50,3 @@ class TheaterSeatingTestCase(TestCase):
         self.seat.delete()
         with self.assertRaises(TheaterSeating.DoesNotExist):
             TheaterSeating.objects.get(seat_number="A1")
-

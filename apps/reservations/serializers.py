@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from apps.reservations.models import Reservation
+from apps.reservations.models import Reservation, MovieTicket
+
+
+class MovieTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MovieTicket
+        fields = "__all__"
 
 
 class ReservationSerializer(serializers.ModelSerializer):
@@ -24,4 +30,4 @@ class ReserveSeatSerializer(serializers.Serializer):
 
 
 class CancelReservationSerializer(serializers.Serializer):
-    seats = serializers.JSONField()
+    ticket_id = serializers.IntegerField()

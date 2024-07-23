@@ -4,11 +4,12 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from apps.reservations.models import Reservation
+from apps.reservations.models import Reservation, MovieTicket
 from apps.reservations.serializers import (
     ReservationSerializer,
     ReserveSeatSerializer,
     CancelReservationSerializer,
+    MovieTicketSerializer,
 )
 from apps.ticketing.models import TheaterSeating
 from apps.reservations.methods.reserve_seat import SeatReservationMixin
@@ -16,6 +17,18 @@ from apps.reservations.methods.cancel_reservation import CancelReservationMixin
 
 
 # Create your views here.
+class MovieTicketAPIView(generics.ListCreateAPIView):
+    queryset = MovieTicket.objects.all()
+    serializer_class = MovieTicketSerializer
+
+
+class MovieTicketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MovieTicket.objects.all()
+    serializer_class = MovieTicketSerializer
+
+    lookup_field = "pk"
+
+
 class ReservationAPIView(generics.ListAPIView):
     queryset = Reservation.objects.all().order_by("-created")
     serializer_class = ReservationSerializer
@@ -71,10 +84,14 @@ class CancelReservationAPIView(generics.CreateAPIView):
 
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
-            mixin = CancelReservationMixin(data=data, user=user)
-            mixin.run()
-            return Response(
-                {"message": "Reservation cancelled successfully"},
-                status=status.HTTP_201_CREATED,
-            )
+            ticket_id = serializer.validated_data.get("ticket_id")
+            try:
+                mixin = CancelReservationMixin(ticket_id=ticket_id, user=user)
+                mixin.run()
+                return Response(
+                    {"message": "Reservation cancelled successfully"},
+                    status=status.HTTP_201_CREATED,
+                )
+            except Exception as e:
+                raise e
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,22 +1,19 @@
 from django.db import transaction
-from apps.users.models import User
 from apps.ticketing.models import TheaterSeating, Show
-from apps.reservations.models import Reservation
-
-from apps.notifications.tasks import seat_reservation_task
-
+from apps.reservations.models import Reservation, MovieTicket
 
 class SeatReservationMixin(object):
     """
     This class deals with seat reservation
 
-    args: 
+    args:
         - data: payload to reserve a seat.
         - user: the person reserving a seat.
 
     returns:
         - None
     """
+
     def __init__(self, data, user):
         self.data = data
         self.user = user
@@ -39,7 +36,16 @@ class SeatReservationMixin(object):
         show = Show.objects.get(id=show_id)
         seat = TheaterSeating.objects.get(id=seats[0])
 
-        reservation = Reservation.objects.create(
+        ticket = MovieTicket.objects.create(
+            user=self.user,
+            ticket_cost=ticket_cost,
+            show=show,
+            reservation_type="Single Ticket",
+            notification_send=False,
+        )
+
+        Reservation.objects.create(
+            ticket=ticket,
             user=self.user,
             show=show,
             seat=seat,
@@ -50,8 +56,7 @@ class SeatReservationMixin(object):
         seat.booked = True
         seat.save()
 
-        seat_reservation_task.delay(self.user.id, show.id, [reservation.id])
-
+        self.trigger_reservation_notification(ticket=ticket)
 
     @transaction.atomic
     def __reserve_multi_ticket(self):
@@ -65,8 +70,17 @@ class SeatReservationMixin(object):
         show = Show.objects.get(id=show_id)
         booked_seats = TheaterSeating.objects.filter(id__in=seats)
 
+        ticket = MovieTicket.objects.create(
+            user=self.user,
+            ticket_cost=ticket_cost,
+            show=show,
+            reservation_type="Multi Ticket",
+            notification_send=False,
+        )
+
         reservations = [
             Reservation(
+                ticket=ticket,
                 user=self.user,
                 show=show,
                 seat=seat,
@@ -75,8 +89,11 @@ class SeatReservationMixin(object):
             )
             for seat in booked_seats
         ]
-        reservations_list = Reservation.objects.bulk_create(reservations)
+        Reservation.objects.bulk_create(reservations)
         booked_seats.update(booked=True)
 
-        reservations_ids = [x.id for x in reservations_list]
-        seat_reservation_task.delay(self.user.id, show.id, reservations_ids)
+        self.trigger_reservation_notification(ticket=ticket)
+
+    def trigger_reservation_notification(self, ticket):
+        #seat_reservation_task(ticket.id)
+        pass

@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from apps.ticketing.models import Show, Theater, TheaterSeating
 
+
 class SeatingArrangementAPIsTestCase(APITestCase):
     def setUp(self) -> None:
         self.theater = Theater.objects.create(
@@ -31,9 +32,7 @@ class SeatingArrangementAPIsTestCase(APITestCase):
             "ticket_cost": 500,
             "show_date": "2024-08-01",
             "show_time": "16:00",
-            "seating_arrangement": {
-                "number_of_rows": 7
-            }
+            "seating_arrangement": {"number_of_rows": 7},
         }
         self.customer_user = User.objects.create(
             first_name="John",
@@ -64,7 +63,7 @@ class SeatingArrangementAPIsTestCase(APITestCase):
         self.shows_url = reverse("shows")
         self.seatings_url = reverse("seatings")
         return super().setUp()
-    
+
     def test_customers_cannot_create_seating_arrangements(self):
         login_payload = {"username": self.customer_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
@@ -72,7 +71,9 @@ class SeatingArrangementAPIsTestCase(APITestCase):
 
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.post(self.shows_url, self.sample_data, headers=headers, format='json')
+        response = self.client.post(
+            self.shows_url, self.sample_data, headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_customers_can_fetch_seating_arrangements(self):
@@ -97,83 +98,86 @@ class SeatingArrangementAPIsTestCase(APITestCase):
         token = response.json()["access"]
 
         headers = {"Authorization": f"Bearer {token}"}
-        response = self.client.post(self.shows_url, self.sample_data, headers=headers, format='json')
+        response = self.client.post(
+            self.shows_url, self.sample_data, headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         fetch_response = self.client.get(self.seatings_url, headers=headers)
         self.assertEqual(fetch_response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(fetch_response.json()["results"], list)
-        self.assertEqual(len(fetch_response.json()["results"]), 10) # Show he 100 but because of pagination you get 10
+        self.assertEqual(
+            len(fetch_response.json()["results"]), 10
+        )  # Show he 100 but because of pagination you get 10
 
     def test_customer_cannot_edit_seating(self):
         seating = TheaterSeating.objects.create(
-            theater=self.theater,
-            show=self.show,
-            seat_number="Q9"
+            theater=self.theater, show=self.show, seat_number="Q9"
         )
         seating.refresh_from_db()
 
-        editing_data = {
-            "seat_number": "Q6"
-        }
+        editing_data = {"seat_number": "Q6"}
         login_payload = {"username": self.customer_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.patch(f"{self.seatings_url}{seating.id}/", data=editing_data, headers=headers, format='json')
+        response = self.client.patch(
+            f"{self.seatings_url}{seating.id}/",
+            data=editing_data,
+            headers=headers,
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
     def test_admin_can_edit_seating(self):
         seating = TheaterSeating.objects.create(
-            theater=self.theater,
-            show=self.show,
-            seat_number="Q9"
+            theater=self.theater, show=self.show, seat_number="Q9"
         )
         seating.refresh_from_db()
 
-        editing_data = {
-            "seat_number": "Q6"
-        }
+        editing_data = {"seat_number": "Q6"}
         login_payload = {"username": self.admin_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.patch(f"{self.seatings_url}{seating.id}/", data=editing_data, headers=headers, format='json')
+        response = self.client.patch(
+            f"{self.seatings_url}{seating.id}/",
+            data=editing_data,
+            headers=headers,
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_customer_cannot_delete_seating(self):
         seating = TheaterSeating.objects.create(
-            theater=self.theater,
-            show=self.show,
-            seat_number="Q9"
+            theater=self.theater, show=self.show, seat_number="Q9"
         )
         seating.refresh_from_db()
-
 
         login_payload = {"username": self.customer_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.delete(f"{self.seatings_url}{seating.id}/",headers=headers, format='json')
+        response = self.client.delete(
+            f"{self.seatings_url}{seating.id}/", headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_delete_seating(self):
         seating = TheaterSeating.objects.create(
-            theater=self.theater,
-            show=self.show,
-            seat_number="Q9"
+            theater=self.theater, show=self.show, seat_number="Q9"
         )
         seating.refresh_from_db()
-
 
         login_payload = {"username": self.admin_user.username, "password": "1234"}
         response = self.client.post(self.login_url, login_payload, format="json")
         token = response.json()["access"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = self.client.delete(f"{self.seatings_url}{seating.id}/",headers=headers, format='json')
+        response = self.client.delete(
+            f"{self.seatings_url}{seating.id}/", headers=headers, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

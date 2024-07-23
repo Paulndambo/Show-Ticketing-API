@@ -9,9 +9,10 @@ class CreateShowMixin(object):
     args:
         - data: payload to create a show.
 
-    returns: 
+    returns:
          - None.
     """
+
     def __init__(self, data):
         self.data = data
 
@@ -54,7 +55,9 @@ class CreateShowMixin(object):
             seats = []
 
             for row in range(1, number_of_rows + 1):
-                row_letter = chr(64 + row)  # Converting row number to corresponding letter
+                row_letter = chr(
+                    64 + row
+                )  # Converting row number to corresponding letter
 
                 # Determine the number of seats in the current row
                 if row == number_of_rows:

@@ -1,11 +1,12 @@
 from django.core.management.base import BaseCommand
 import coverage
 
+
 class Command(BaseCommand):
-    help = 'Run tests with coverage'
+    help = "Run tests with coverage"
 
     def handle(self, *args, **kwargs):
-        cov = coverage.Coverage(source=['.'])
+        cov = coverage.Coverage(source=["."])
         cov.erase()
         cov.start()
 
@@ -14,17 +15,19 @@ class Command(BaseCommand):
 
         TestRunner = get_runner(settings)
         test_runner = TestRunner()
-        failures = test_runner.run_tests(['apps/users/tests', 'apps/reservations/tests', 'apps/ticketing/tests'])
-        
+        failures = test_runner.run_tests(
+            ["apps/users/tests", "apps/reservations/tests", "apps/ticketing/tests"]
+        )
+
         cov.stop()
         cov.save()
-        
-        self.stdout.write(self.style.SUCCESS('Generating coverage report'))
+
+        self.stdout.write(self.style.SUCCESS("Generating coverage report"))
         cov.report()
-        cov.html_report(directory='htmlcov')
+        cov.html_report(directory="htmlcov")
 
         if failures:
-            self.stdout.write(self.style.ERROR('Tests failed'))
+            self.stdout.write(self.style.ERROR("Tests failed"))
             exit(1)
         else:
-            self.stdout.write(self.style.SUCCESS('Tests passed'))
+            self.stdout.write(self.style.SUCCESS("Tests passed"))

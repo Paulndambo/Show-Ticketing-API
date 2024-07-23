@@ -23,14 +23,13 @@ class ShowTestCase(TestCase):
             show_time="16:00",
         )
         return super().setUp()
-    
+
     def test_show_can_created(self):
         self.assertEqual((str(self.show)), "FA Community Shield 2025")
         self.assertEqual(self.show.title, "FA Community Shield 2025")
         self.assertEqual(self.show.ticket_cost, 500)
         self.assertIsInstance(self.show.ticket_cost, Decimal)
         self.assertIsInstance(self.show.title, str)
-
 
     def test_show_can_be_updated(self):
         self.show.title = "EPL Community Shield 2025"
@@ -42,7 +41,7 @@ class ShowTestCase(TestCase):
         self.assertEqual(self.show.ticket_cost, 1000)
         self.assertIsInstance(self.show.title, str)
         self.assertIsInstance(self.show.ticket_cost, Decimal)
-    
+
     def test_title_is_string(self):
         self.assertIsInstance(self.show.title, str)
 

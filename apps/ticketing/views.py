@@ -25,14 +25,16 @@ class TheatreAPIView(generics.ListCreateAPIView):
     queryset = Theater.objects.all().order_by("-created")
     serializer_class = TheaterSerializer
     permission_classes = [IsAdminOrReadOnly]
- 
+
     def get_queryset(self):
         specified_date = self.request.query_params.get("date")
-        cache_key = f'theater_list_{specified_date}' if specified_date else 'theater_list_all'
-        cached_data = cache.get(cache_key)
+        #cache_key = (
+        #    f"theater_list_{specified_date}" if specified_date else "theater_list_all"
+        #)
+        #cached_data = cache.get(cache_key)
 
-        if cached_data:
-            return cached_data
+        #if cached_data:
+        #    return cached_data
 
         if specified_date:
             search_date = datetime.strptime(specified_date, "%Y-%m-%d").date()
@@ -45,9 +47,9 @@ class TheatreAPIView(generics.ListCreateAPIView):
         else:
             queryset = super().get_queryset()
 
-        cache.set(cache_key, queryset, timeout=60*15)  # Cache for 15 minutes
+        #cache.set(cache_key, queryset, timeout=60 * 15)  # Cache for 15 minutes
         return queryset
-    
+
     def perform_create(self, serializer):
         super().perform_create(serializer)
         cache.clear()  # Clear cache on create
@@ -71,7 +73,7 @@ class ShowsAPIView(generics.ListCreateAPIView):
     serializer_class = ShowSerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = NoPagination
-    cache_key = 'shows_list'
+    cache_key = "shows_list"
 
     def get_serializer_class(self, *args, **kwargs):
         user = self.request.user
@@ -81,13 +83,18 @@ class ShowsAPIView(generics.ListCreateAPIView):
             if not user.is_staff or not user.is_superuser:
                 return ShowListSerializer
             return ShowSerializer
-        
+
     def get_queryset(self):
+        """
         cached_shows = cache.get(self.cache_key)
         if cached_shows is None:
             cached_shows = super().get_queryset()
-            cache.set(self.cache_key, cached_shows, timeout=60*15)  # Cache timeout of 15 minutes
+            cache.set(
+                self.cache_key, cached_shows, timeout=60 * 15
+            )  # Cache timeout of 15 minutes
         return cached_shows
+        """
+        return super().get_queryset()
 
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -95,7 +102,7 @@ class ShowsAPIView(generics.ListCreateAPIView):
         if serializer.is_valid(raise_exception=True):
             mixin = CreateShowMixin(data=data)
             mixin.run()
-            cache.delete('shows_list')  # Invalidate cache on post
+            cache.delete("shows_list")  # Invalidate cache on post
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

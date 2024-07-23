@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.utils.html import strip_tags
 
 
-class SendMessage(object): 
+class SendMessage(object):
     """
     This class contains methods for sending different types of notifications,
     Each type of notification e.g sms/email will have custom configurations.
@@ -14,7 +14,8 @@ class SendMessage(object):
         - None.
     returns:
         - None.
-    """   
+    """
+
     def send_sms(self):
         pass
 
@@ -35,18 +36,24 @@ class SendMessage(object):
             context_data["email_date"] = str(date.today())
 
             if template:
-                html_message = get_template("messages/{0}.html".format(template)).render(context_data)
+                html_message = get_template(
+                    "messages/{0}.html".format(template)
+                ).render(context_data)
             else:
-                html_message = get_template("messages/send_message.html").render(context_data)
+                html_message = get_template("messages/send_message.html").render(
+                    context_data
+                )
 
             message = strip_tags(html_message)
-        
+
             headers = {
                 "Reply-To": settings.SITE_EMAIL,
                 "From": settings.SITE_EMAIL,
             }
 
-            subject = "{0} - {1}".format(settings.EMAIL_SUBJECT, context_data["subject"])
+            subject = "{0} - {1}".format(
+                settings.EMAIL_SUBJECT, context_data["subject"]
+            )
 
             email = EmailMultiAlternatives(
                 subject=subject,

@@ -4,6 +4,8 @@ from apps.reservations.views import (
     ReservationDetailAPIView,
     ReserveSeatAPIView,
     CancelReservationAPIView,
+    MovieTicketAPIView,
+    MovieTicketDetailAPIView,
 )
 
 urlpatterns = [
@@ -14,5 +16,9 @@ urlpatterns = [
         "cancel-reservation/",
         CancelReservationAPIView.as_view(),
         name="cancel-reservation",
+    ),
+    path("tickets/", MovieTicketAPIView.as_view(), name="tickets"),
+    path(
+        "tickets/<int:pk>/", MovieTicketDetailAPIView.as_view(), name="ticket-details"
     ),
 ]

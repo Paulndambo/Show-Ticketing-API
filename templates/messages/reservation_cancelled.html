@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Sorry to see your ticket cancellation, {{name}}!</h2>
+<h3>Show Title: {{show_title}}</h3>
+<h3>Show Time: {{show_date}} {{show_time}}</h3>
+<p>We are sad to confirm your movie ticket cancellation. Here are your ticket details:</p>
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Seat Number</th>
+            <th>Ticket Type</th>
+            <th>Bought At.</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+        <tr>
+            <td>{{ reservation.id }}</td>
+            <td>{{reservation.seat.seat_number}}</td>
+            <td>{{ reservation.reservation_type }}</td>
+            <td>{{reservation.created.date}} {{reservation.created.hour}}:{{reservation.created.minute}}</td>
+        </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+<p>We are sad to see you cancel your reservations, we look forward to seeing you again. Enjoy your day!</p>
+{% endblock content %}

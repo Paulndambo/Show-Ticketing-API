@@ -1,7 +1,6 @@
 from django.db import transaction
-from apps.users.models import User
-from apps.ticketing.models import TheaterSeating, Show
-from apps.reservations.models import Reservation
+from apps.ticketing.models import TheaterSeating
+from apps.reservations.models import Reservation, MovieTicket
 
 
 class CancelReservationMixin(object):
@@ -15,8 +14,9 @@ class CancelReservationMixin(object):
     returns:
         - None.
     """
-    def __init__(self, data, user):
-        self.data = data
+
+    def __init__(self, ticket_id, user):
+        self.ticket_id = ticket_id
         self.user = user
 
     def run(self):
@@ -27,18 +27,28 @@ class CancelReservationMixin(object):
 
     @transaction.atomic
     def __cancel_single_seat_reservation(self):
-        reservation = Reservation.objects.get(id=self.data["seats"][0], user=self.user)
+        ticket = MovieTicket.objects.get(id=self.ticket_id)
+        reservation = Reservation.objects.get(ticket=ticket, user=self.user)
         reservation.status = "Cancelled"
         reservation.save()
 
         reservation.seat.booked = False
         reservation.seat.save()
 
+        self.trigger_cancellation_notification(ticket=ticket)
+
     @transaction.atomic
     def __cancel_multi_seat_reservation(self):
-        reservations = Reservation.objects.filter(id__in=self.data["seats"])
+        ticket = MovieTicket.objects.get(id=self.ticket_id)
+        reservations = Reservation.objects.filter(ticket=ticket, user=self.user)
         reservations.update(status="Cancelled")
 
         seat_ids = list(reservations.values_list("seat_id", flat=True))
         seats = TheaterSeating.objects.filter(id__in=seat_ids)
         seats.update(booked=False)
+
+        self.trigger_cancellation_notification(ticket=ticket)
+
+    def trigger_cancellation_notification(self, ticket):
+        #ticket_cancellation_task.delay(ticket.id)
+        pass

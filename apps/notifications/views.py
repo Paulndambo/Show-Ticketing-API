@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from apps.notifications.tasks import add
 
+
 def add_view(request):
     result = add.delay(4, 4)
-    return JsonResponse({'task_id': result.id, 'status': result.status})
+    return JsonResponse({"task_id": result.id, "status": result.status})
