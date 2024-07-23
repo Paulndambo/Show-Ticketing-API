@@ -57,7 +57,7 @@ class SeatReservationMixin(object):
         seat.booked = True
         seat.save()
 
-        self.trigger_reservation_notification(ticket=ticket)
+        #self.trigger_reservation_notification(ticket=ticket)
 
     @transaction.atomic
     def __reserve_multi_ticket(self):
@@ -93,7 +93,7 @@ class SeatReservationMixin(object):
         Reservation.objects.bulk_create(reservations)
         booked_seats.update(booked=True)
 
-        self.trigger_reservation_notification(ticket=ticket)
+        #self.trigger_reservation_notification(ticket=ticket)
 
     def trigger_reservation_notification(self, ticket):
         #seat_reservation_task(ticket.id)
