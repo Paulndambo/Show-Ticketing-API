@@ -1,5 +1,10 @@
 from django.shortcuts import render
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -17,10 +22,24 @@ from apps.reservations.methods.cancel_reservation import CancelReservationMixin
 
 
 # Create your views here.
+@method_decorator(cache_page(60*15), name='dispatch')
 class MovieTicketAPIView(generics.ListCreateAPIView):
     queryset = MovieTicket.objects.all()
     serializer_class = MovieTicketSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset
+        if not user.is_superuser or not user.is_staff:
+            return queryset.filter(user=user)
+        return super().get_queryset()
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        cache_key = "movie_tickets_list"
+        cache.delete(cache_key)
+    
 
 class MovieTicketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MovieTicket.objects.all()
