@@ -20,8 +20,8 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    "run-every-5-seconds": {"task": "hello_world", "schedule": 5},
-    "run-every-7-seconds": {"task": "check_celery_task", "schedule": 7},
+    "run-every-20-seconds": {"task": "hello_world", "schedule": 20},
+    "run-every-30-seconds": {"task": "check_celery_task", "schedule": 30},
     # "run-every-60-seconds": {"task": "check_if_celery_works", "schedule": 60},
     # "run-every-2-minutes": {"task": "event_space_booked_task", "schedule": 120},
     # "run-every-1-minute": {"task": "account_activation_task", "schedule": 60},
