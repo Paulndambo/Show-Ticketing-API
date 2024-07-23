@@ -3,11 +3,13 @@ from datetime import timedelta
 
 from apps.notifications.mixins import SendMessage
 from apps.reservations.models import MovieTicket
+from apps.core.document_generator import DocumentGenerator
+
+document_generator = DocumentGenerator()
 
 class NotificationConsumer:
     body = None
 
-   
     @classmethod
     def ticket_purchased(cls):
         """
@@ -27,6 +29,15 @@ class NotificationConsumer:
                 "reservations": reservations,
             }
             send_message = SendMessage()
+            ticket_pdf = document_generator.generate_pdf_ticket(ticket, "ticket.html")
+            attachments = [
+                {
+                    'name': 'Movie Ticket.pdf',
+                    'main_file': ticket_pdf.read(),
+                    'media_type': 'application/pdf'
+                },
+            ]
+            context_data["attached_files"] = attachments
             send_message.send_mail(
                 context_data,
                 [

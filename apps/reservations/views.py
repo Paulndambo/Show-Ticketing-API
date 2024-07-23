@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
@@ -22,7 +20,7 @@ from apps.reservations.methods.cancel_reservation import CancelReservationMixin
 
 
 # Create your views here.
-@method_decorator(cache_page(60*15), name='dispatch')
+@method_decorator(cache_page(60*3), name='dispatch')
 class MovieTicketAPIView(generics.ListCreateAPIView):
     queryset = MovieTicket.objects.all()
     serializer_class = MovieTicketSerializer

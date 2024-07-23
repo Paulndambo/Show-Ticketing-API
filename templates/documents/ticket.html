@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details h2 {
+            margin-bottom: 10px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .seats {
+            margin-bottom: 20px;
+        }
+        .seats table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .seats th, .seats td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Movie Ticket</h1>
+        </div>
+        <div class="details">
+            <h2>Ticket Details</h2>
+            <p><strong>Movie:</strong> {{ show_title }}</p>
+            <p><strong>Date:</strong> {{ show_date }}</p>
+            <p><strong>Time:</strong> {{ show_time }}</p>
+            <p><strong>Customer:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Ticket ID:</strong> {{ ticket_id }}</p>
+        </div>
+        <div class="seats">
+            <h2>Booked Seats</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Seat Number</th>
+                        <th>Ticket Type</th>
+                        <th>Purchased At.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>{{reservation.id}}</td>
+                        <td>{{ reservation.seat.seat_number }}</td>
+                        <td>{{ reservation.reservation_type }}</td>
+                        <td>{{reservation.created.date}} {{reservation.created.hour}}:{{reservation.created.minute}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            <p>Thank you for booking with us!</p>
+        </div>
+    </div>
+</body>
+</html>
