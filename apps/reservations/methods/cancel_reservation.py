@@ -39,6 +39,7 @@ class CancelReservationMixin(object):
 
             ticket.status = "Cancelled"
             ticket.save()
+            print("Ticket cancelled!!")
 
             self.trigger_cancellation_notification(ticket=ticket)
 

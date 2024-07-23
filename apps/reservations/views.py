@@ -103,12 +103,16 @@ class CancelReservationAPIView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             ticket_id = serializer.validated_data.get("ticket_id")
             try:
-                mixin = CancelReservationMixin(ticket_id=ticket_id, user=user)
-                mixin.run()
-                return Response(
-                    {"message": "Reservation cancelled successfully"},
-                    status=status.HTTP_201_CREATED,
-                )
+                ticket = MovieTicket.objects.filter(id=ticket_id).first()
+                if ticket.status == "Cancelled":
+                    return Response({ "message": "Ticket is already cancelled" }, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    mixin = CancelReservationMixin(ticket_id=ticket.id, user=user)
+                    mixin.run()
+                    return Response(
+                        {"message": "Reservation cancelled successfully"},
+                        status=status.HTTP_201_CREATED,
+                    )
             except Exception as e:
                 raise e
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
