@@ -203,33 +203,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://34.123.255.211:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_RESULT_BACKEND", "redis://34.123.255.211:6379/0"
-)  # URL for Redis as the backend
-
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = "UTC"
-
-CELERY_BEAT_SCHEDULE = {
-    "run-every-5-seconds": {
-        "task": "apps.notifications.tasks.print_hello_world",
-        "schedule": 5,
-    },
-    "add-every-30-seconds": {
-        "task": "apps.notifications.tasks.add",
-        "schedule": 30,
-        "args": (16, 16),
-    },
-    "mark-shows-as-inactive": {
-        "task": "apps.notifications.tasks.mark_past_shows_as_inactive",
-        "schedule": 60 * 60 * 24,
-    },
-}
-
+"""
 # Email configurations
 EMAIL_HOST_PASSWORD = "akacnconppcdpeth"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -254,7 +228,7 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = os.environ.get("SITE_EMAIL", "noreply@yourdomain.com")
 SITE_EMAIL = os.environ.get("SITE_EMAIL", "noreply@yourdomain.com")
 EMAIL_SUBJECT = "Show Ticketing"
-"""
+
 # Cache Settings
 REDIS_CACHE_BACKEND = os.environ.get(
     "CELERY_BROKER_URL", "redis://34.123.255.211:6379/0"
@@ -262,7 +236,7 @@ REDIS_CACHE_BACKEND = os.environ.get(
 
 BROKER_URL = "amqps://yxiksldz:DFvFH1U29v37IPQTGEHN3JvQ0Fl0JdJv@hummingbird.rmq.cloudamqp.com/yxiksldz"
 
-"""
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -270,14 +244,6 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
-    }
-}
-"""
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "data_cache",
     }
 }
 

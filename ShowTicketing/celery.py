@@ -19,6 +19,13 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 
-@app.task(bind=True)
-def debug_task(self):
-    print(f"Request: {self.request!r}")
+app.conf.beat_schedule = {
+    "run-every-5-seconds": {"task": "hello_world", "schedule": 5},
+    "run-every-7-seconds": {"task": "check_celery_task", "schedule": 7},
+    # "run-every-60-seconds": {"task": "check_if_celery_works", "schedule": 60},
+    # "run-every-2-minutes": {"task": "event_space_booked_task", "schedule": 120},
+    # "run-every-1-minute": {"task": "account_activation_task", "schedule": 60},
+    # "run-every-3-minutes": {"task": "hotel_room_booked_task", "schedule": 150},
+    # "run-every-45-seconds": {"task": "ticket_purchased_task", "schedule": 45},
+    # "run-every-20-seconds": {"task": "payment_received_task", "schedule": 20},
+}

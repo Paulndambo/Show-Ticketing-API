@@ -1,22 +1,29 @@
 # myapp/tasks.py
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from apps.notifications.mixins import SendMessage
-from apps.reservations.models import Reservation, MovieTicket
-from apps.ticketing.models import Show
-from apps.users.models import User
 from datetime import datetime
+from ShowTicketing.celery import app
+
+from apps.core.publisher import BasePublisher
 
 date_today = datetime.now().date()
 
 
-@shared_task
-def add(x, y):
-    return x + y
 
-
-@shared_task
-def print_hello_world():
+@app.task(name="hello_world")
+def hello_world():
+    publisher = BasePublisher(
+        routing_key="hello_world",
+        body={
+            "message": "Hello World!!"
+        }
+    )
+    publisher.run()
     print("Hello World, am running using celery")
 
 
+@app.task(name="check_celery_task")
+def check_celery_task():
+    print("************************Metropolitan*********************")
+    print("It looks like celery is working fine")
+    print("************************Metropolitan*********************")

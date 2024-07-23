@@ -1,6 +1,7 @@
 from django.db import transaction
 from apps.ticketing.models import TheaterSeating, Show
 from apps.reservations.models import Reservation, MovieTicket
+from apps.core.publisher import BasePublisher
 
 class SeatReservationMixin(object):
     """
@@ -96,4 +97,10 @@ class SeatReservationMixin(object):
 
     def trigger_reservation_notification(self, ticket):
         #seat_reservation_task(ticket.id)
-        pass
+        publisher = BasePublisher(
+            routing_key="ticket_purchased",
+            body={
+                "ticket_id": ticket.id
+            }
+        )
+        publisher.run()
