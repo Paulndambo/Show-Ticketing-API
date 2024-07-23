@@ -33,7 +33,7 @@ class NotificationConsumer:
             attachments = [
                 {
                     'name': 'Movie Ticket.pdf',
-                    'main_file': ticket_pdf.read(),
+                    'main_file': ticket_pdf,
                     'media_type': 'application/pdf'
                 },
             ]
