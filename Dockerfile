@@ -4,14 +4,26 @@ FROM python:slim
 # Set environment variables (modify as needed)
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Set the working directory within the container
-WORKDIR /app
+# Update package list and install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential \
+    libpango1.0-0 \
+    libcairo2 \
+    libffi-dev \
+    shared-mime-info \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
+# Install WeasyPrint
 RUN apt-get -q update
 RUN apt-get -qy install --no-install-recommends wget
 RUN apt install weasyprint
 
+WORKDIR /app
 
 # Copy the requirements file into the container
 COPY requirements.txt .
