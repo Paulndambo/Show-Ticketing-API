@@ -37,6 +37,9 @@ class CancelReservationMixin(object):
             seats = TheaterSeating.objects.filter(id__in=seat_ids)
             seats.update(booked=False)
 
+            ticket.status = "Cancelled"
+            ticket.save()
+
             self.trigger_cancellation_notification(ticket=ticket)
 
     def trigger_cancellation_notification(self, ticket):
