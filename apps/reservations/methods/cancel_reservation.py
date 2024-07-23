@@ -2,6 +2,7 @@ from django.db import transaction
 from apps.ticketing.models import TheaterSeating
 from apps.reservations.models import Reservation, MovieTicket
 from apps.core.publisher import BasePublisher
+from apps.notifications.tasks import ticket_cancellation_task
 
 
 class CancelReservationMixin(object):
@@ -50,7 +51,8 @@ class CancelReservationMixin(object):
         self.trigger_cancellation_notification(ticket=ticket)
 
     def trigger_cancellation_notification(self, ticket):
-        #ticket_cancellation_task.delay(ticket.id)
+        ticket_cancellation_task.delay(ticket.id)
+        """
         publisher = BasePublisher(
             routing_key="ticket_cancelled",
             body={
@@ -58,3 +60,4 @@ class CancelReservationMixin(object):
             }
         )
         publisher.run()
+        """

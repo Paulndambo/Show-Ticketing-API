@@ -7,10 +7,7 @@ from apps.reservations.models import MovieTicket
 class NotificationConsumer:
     body = None
 
-    @classmethod
-    def hello_world(cls):
-        print(cls.body)
-
+   
     @classmethod
     def ticket_purchased(cls):
         """

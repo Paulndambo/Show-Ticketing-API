@@ -1,7 +1,7 @@
 from django.db import transaction
 from apps.ticketing.models import TheaterSeating, Show
 from apps.reservations.models import Reservation, MovieTicket
-from apps.core.publisher import BasePublisher
+
 
 class SeatReservationMixin(object):
     """
@@ -57,7 +57,6 @@ class SeatReservationMixin(object):
         seat.booked = True
         seat.save()
 
-        #self.trigger_reservation_notification(ticket=ticket)
 
     @transaction.atomic
     def __reserve_multi_ticket(self):
@@ -92,15 +91,3 @@ class SeatReservationMixin(object):
         ]
         Reservation.objects.bulk_create(reservations)
         booked_seats.update(booked=True)
-
-        #self.trigger_reservation_notification(ticket=ticket)
-
-    def trigger_reservation_notification(self, ticket):
-        #seat_reservation_task(ticket.id)
-        publisher = BasePublisher(
-            routing_key="ticket_purchased",
-            body={
-                "ticket_id": ticket.id
-            }
-        )
-        publisher.run()
