@@ -29,7 +29,7 @@ class NotificationConsumer:
                 "reservations": reservations,
             }
             send_message = SendMessage()
-            ticket_pdf = document_generator.generate_pdf_ticket(ticket, "ticket.html")
+            ticket_pdf = document_generator.generate_pdf_ticket(ticket, "documents/ticket.html")
             attachments = [
                 {
                     'name': 'Movie Ticket.pdf',
