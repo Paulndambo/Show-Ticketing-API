@@ -21,25 +21,11 @@ class CancelReservationMixin(object):
         self.user = user
 
     def run(self):
-        if len(self.data.get("seats")) >= 2:
-            self.__cancel_multi_seat_reservation()
+        self.__cancel_ticket_reservation()
 
-        self.__cancel_single_seat_reservation()
-
+ 
     @transaction.atomic
-    def __cancel_single_seat_reservation(self):
-        ticket = MovieTicket.objects.get(id=self.ticket_id)
-        reservation = Reservation.objects.get(ticket=ticket, user=self.user)
-        reservation.status = "Cancelled"
-        reservation.save()
-
-        reservation.seat.booked = False
-        reservation.seat.save()
-
-        self.trigger_cancellation_notification(ticket=ticket)
-
-    @transaction.atomic
-    def __cancel_multi_seat_reservation(self):
+    def __cancel_ticket_reservation(self):
         ticket = MovieTicket.objects.get(id=self.ticket_id)
         reservations = Reservation.objects.filter(ticket=ticket, user=self.user)
         reservations.update(status="Cancelled")
