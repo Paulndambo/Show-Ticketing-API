@@ -21,7 +21,7 @@ RUN apt-get update && \
 # Install WeasyPrint
 RUN apt-get -q update
 RUN apt-get -qy install --no-install-recommends wget
-RUN apt install weasyprint
+#RUN apt install weasyprint
 
 WORKDIR /app
 
