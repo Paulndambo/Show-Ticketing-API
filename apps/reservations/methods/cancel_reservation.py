@@ -25,23 +25,19 @@ class CancelReservationMixin(object):
  
     @transaction.atomic
     def __cancel_ticket_reservation(self):
-        ticket = MovieTicket.objects.filter(id=self.ticket_id).first()
-        if not ticket:
-            print("No ticket found with provided id")
+        ticket = MovieTicket.objects.get(id=self.ticket_id)
+        reservations = Reservation.objects.filter(ticket=ticket, user=self.user)
+        reservations.update(status="Cancelled")
 
-        else:
-            reservations = Reservation.objects.filter(ticket=ticket, user=self.user)
-            reservations.update(status="Cancelled")
+        seat_ids = list(reservations.values_list("seat_id", flat=True))
+        seats = TheaterSeating.objects.filter(id__in=seat_ids)
+        seats.update(booked=False)
 
-            seat_ids = list(reservations.values_list("seat_id", flat=True))
-            seats = TheaterSeating.objects.filter(id__in=seat_ids)
-            seats.update(booked=False)
+        ticket.status = "Cancelled"
+        ticket.save()
+        print("Ticket cancelled!!")
 
-            ticket.status = "Cancelled"
-            ticket.save()
-            print("Ticket cancelled!!")
-
-            self.trigger_cancellation_notification(ticket=ticket)
+        self.trigger_cancellation_notification(ticket=ticket)
 
     def trigger_cancellation_notification(self, ticket):
         ticket_cancellation_task.delay(ticket.id)
