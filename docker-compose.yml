@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=ticketing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
   web:
     build: .
     container_name: django_web
@@ -21,40 +32,6 @@ services:
       - EMAIL_HOST=mailhog
       - EMAIL_PORT=1025
       - SITE_EMAIL=info@ticketing.com
-      - EMAIL_HOST_PASSWORD=mailhog
-      - EMAIL_HOST_USER=mailhog
-    depends_on:
-      - db
-
-  db:
-    image: postgres:13
-    container_name: postgres_db
-    environment:
-      - POSTGRES_DB=ticketing
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      
-
-  celery:
-    build: .
-    container_name: celery_worker
-    command: celery -A ShowTicketing worker --loglevel=info
-    volumes:
-      - .:/app
-    environment:
-      - DEBUG=1
-      - DJANGO_ALLOWED_HOSTS=localhost
-      - POSTGRES_DB=ticketing
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-      - DATABASE_HOST=db
-      - CELERY_BROKER_URL=redis://34.123.255.211:6379/0
-      - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
-      - EMAIL_HOST=mailhog
-      - EMAIL_PORT=1025
-      - SITE_EMAIL=noreply@yourdomain.com
       - EMAIL_HOST_PASSWORD=mailhog
       - EMAIL_HOST_USER=mailhog
     depends_on:
@@ -84,6 +61,33 @@ services:
       - EMAIL_HOST_USER=mailhog
     depends_on:
       - db
+      - web
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A ShowTicketing worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost
+      - POSTGRES_DB=ticketing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - DATABASE_HOST=db
+      - CELERY_BROKER_URL=redis://34.123.255.211:6379/0
+      - CELERY_RESULT_BACKEND=redis://34.123.255.211:6379/0
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
+      - SITE_EMAIL=noreply@yourdomain.com
+      - EMAIL_HOST_PASSWORD=mailhog
+      - EMAIL_HOST_USER=mailhog
+    depends_on:
+      - db
+      - web
+      - consumer
+
 
   celery-beat:
     build: .
@@ -107,6 +111,9 @@ services:
       - EMAIL_HOST_USER=mailhog
     depends_on:
       - db
+      - web
+      - consumer
+      - celery
 
   mailhog:
     image: mailhog/mailhog
