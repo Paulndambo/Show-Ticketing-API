@@ -36,7 +36,15 @@ services:
       - EMAIL_HOST_USER=mailhog
     depends_on:
       - db
-
-
+  
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    depends_on:
+      - db 
+      - web
+    
 volumes:
   postgres_data:
