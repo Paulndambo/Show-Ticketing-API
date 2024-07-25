@@ -42,7 +42,8 @@ class CreateShowMixin(object):
             - None
         """
         try:
-            number_of_rows = self.data.get("seating_arrangement")["number_of_rows"]
+            number_of_rows = self.data.get("seating_arrangement").get("number_of_rows", 0)
+            
             number_of_seats = show.theater.number_of_seats
 
             # Calculate the number of seats per row
